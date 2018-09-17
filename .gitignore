@@ -11,3 +11,6 @@
 # Gradle files
 build/
 .gradle/
+
+#vscode files
+.vscode/

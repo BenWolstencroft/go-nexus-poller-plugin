@@ -67,7 +67,7 @@ public class NexusPluginTest {
     public void shouldReturnNoErrorsForCorrectRepositoryConfiguration() {
         String requestBody = "{\"repository-configuration\":{" +
                 "\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
-                "\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
+                "\"REPO_NAME\":{\"value\":\"nuget-sysdev\"}," +
                 "\"USERNAME\":{\"value\":\"\"}," +
                 "\"PASSWORD\":{\"value\":\"\"}}" +
                 "}";
@@ -86,7 +86,7 @@ public class NexusPluginTest {
     public void shouldSuccessfullyConnectToRepository() {
         String requestBody = "{\"repository-configuration\":{" +
                 "\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
-                "\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
+                "\"REPO_NAME\":{\"value\":\"nuget-sysdev\"}," +
                 "\"USERNAME\":{\"value\":\"\"}," +
                 "\"PASSWORD\":{\"value\":\"\"}}" +
                 "}";
@@ -122,8 +122,8 @@ public class NexusPluginTest {
 
     @Test
     public void shouldReturnNoErrorsForCorrectPackageConfiguration() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}}," +
-                "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"NUnit\"}}}";
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-sysdev\"}}," +
+                "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"Zen.Log\"}}}";
         when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
@@ -137,12 +137,12 @@ public class NexusPluginTest {
 
     @Test
     public void shouldSuccessfullyConnectToPackage() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}},"+
-                              "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"JQuery\"},"+
-                                                            "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
-                                                            "\"POLL_VERSION_TO\":{\"value\":\"2.2.5\"}," +
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-sysdev\"}},"+
+                              "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"Zen\"},"+
+                                                            "\"POLL_VERSION_FROM\":{\"value\":\"1.0.3\"},"+
+                                                            "\"POLL_VERSION_TO\":{\"value\":\"1.0.5\"}," +
                                                             "\"INCLUDE_PRE_RELEASE\":{\"value\":\"yes\"}}}\n";
-        String expectedResponseAsString = "{\"messages\":[\"Successfully found revision: jQuery-2.2.4\"],\"status\":\"success\"}";
+        String expectedResponseAsString = "{\"messages\":[\"Successfully found revision: Zen-1.0.4\"],\"status\":\"success\"}";
         when(goApiPluginRequest.requestName()).thenReturn(CHECK_PACKAGE_CONNECTION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
@@ -157,10 +157,10 @@ public class NexusPluginTest {
 
     @Test
     public void getLatestRevisionShouldBeSuccessful() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}},"+
-                "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"JQuery\"},"+
-                "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
-                "\"POLL_VERSION_TO\":{\"value\":\"2.2.5\"}," +
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-sysdev\"}},"+
+                "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"Zen\"},"+
+                "\"POLL_VERSION_FROM\":{\"value\":\"1.0.3\"},"+
+                "\"POLL_VERSION_TO\":{\"value\":\"1.0.5\"}," +
                 "\"INCLUDE_PRE_RELEASE\":{\"value\":\"yes\"}}}\n";
         when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
@@ -172,14 +172,14 @@ public class NexusPluginTest {
 
     @Test
     public void getLatestRevisionSinceShouldBeSuccessful() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}},"+
-                "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"jQuery\"},"+
-                                           "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
-                                           "\"POLL_VERSION_TO\":{\"value\":\"3\"},"+
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-sysdev\"}},"+
+                "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"Zen\"},"+
+                                           "\"POLL_VERSION_FROM\":{\"value\":\"1.0.3\"},"+
+                                           "\"POLL_VERSION_TO\":{\"value\":\"4\"},"+
                                            "\"INCLUDE_PRE_RELEASE\":{\"value\":\"no\"}},"+
-                "\"previous-revision\":{\"revision\":\"jQuery-2.2.4\","+
+                "\"previous-revision\":{\"revision\":\"Zen-1.0.4\","+
                                        "\"timestamp\":\"2016-06-16T16:31:00.873Z\","+
-                                       "\"data\":{\"LOCATION\":\"https://repositories.pse.zen.co.uk/repository/nuget-sysdev/jQuery/2.2.4\",\"VERSION\":\"2.2.4\"}}}";
+                                       "\"data\":{\"LOCATION\":\"https://repositories.pse.zen.co.uk/repository/nuget-sysdev/Zen/1.0.4\",\"VERSION\":\"1.0.4\"}}}";
         when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION_SINCE);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 

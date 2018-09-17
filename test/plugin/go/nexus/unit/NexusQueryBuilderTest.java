@@ -25,8 +25,8 @@ import plugin.go.nexus.NexusQueryBuilder;
 public class NexusQueryBuilderTest {
 
     NexusQueryBuilder nexusQueryBuilder;
-    private static final String PACKAGE_ID = "NUnit";
-    private static final String DEFAULT_N_UNIT_OPTIONS = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+    private static final String PACKAGE_ID = "Zen.Log";
+    private static final String DEFAULT_N_UNIT_OPTIONS = "/GetUpdates()?packageIds='Zen.Log'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
 
     @Before
     public void setup() {
@@ -34,7 +34,7 @@ public class NexusQueryBuilderTest {
     }
 
     @Test
-    public void shouldUseDefaultsIfOnlyNUnitIsChosen() {
+    public void shouldUseDefaultsIfOnlyZen.LogIsChosen() {
         String query = nexusQueryBuilder.getQuery(PACKAGE_ID, "", "", "", "");
         Assert.assertEquals(DEFAULT_N_UNIT_OPTIONS, query);
     }
@@ -47,7 +47,7 @@ public class NexusQueryBuilderTest {
 
     @Test
     public void shouldHandleUpperBound() {
-        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$filter=Version%20lt%20'1.2'&$orderby=Version%20desc&$top=1";
+        String expectedOptions = "/GetUpdates()?packageIds='Zen.Log'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$filter=Version%20lt%20'1.2'&$orderby=Version%20desc&$top=1";
         String query = nexusQueryBuilder.getQuery(PACKAGE_ID, "", null, "1.2", "yes");
         Assert.assertEquals(expectedOptions, query);
 
@@ -55,14 +55,14 @@ public class NexusQueryBuilderTest {
 
     @Test
     public void shouldHandleLowerBound() {
-        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='1.3'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String expectedOptions = "/GetUpdates()?packageIds='Zen.Log'&versions='1.3'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
         String query = nexusQueryBuilder.getQuery(PACKAGE_ID, "", "1.3", null, "yes");
         Assert.assertEquals(expectedOptions, query);
     }
 
     @Test
     public void shouldHandleLowerAndUpperBound() {
-        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='1.3'&includePrerelease=true&includeAllVersions=true&$filter=Version%20lt%20'1.6'&$orderby=Version%20desc&$top=1";
+        String expectedOptions = "/GetUpdates()?packageIds='Zen.Log'&versions='1.3'&includePrerelease=true&includeAllVersions=true&$filter=Version%20lt%20'1.6'&$orderby=Version%20desc&$top=1";
         String query = nexusQueryBuilder.getQuery(PACKAGE_ID, "", "1.3", "1.6", "yes");
         Assert.assertEquals(expectedOptions, query);
     }
@@ -75,21 +75,21 @@ public class NexusQueryBuilderTest {
 
     @Test
     public void shouldIncludePreReleaseWhenUserInputInvalidOption() {
-        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String expectedOptions = "/GetUpdates()?packageIds='Zen.Log'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
         String query = nexusQueryBuilder.getQuery(PACKAGE_ID, "", "", "", "invalidPreRelease");
         Assert.assertEquals(expectedOptions, query);
     }
 
     @Test
      public void shouldNotIncludePreReleaseWhenUserInputsNo() {
-        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=false&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String expectedOptions = "/GetUpdates()?packageIds='Zen.Log'&versions='0.0.1'&includePrerelease=false&includeAllVersions=true&$orderby=Version%20desc&$top=1";
         String query = nexusQueryBuilder.getQuery(PACKAGE_ID, "", "", "", "NO");
         Assert.assertEquals(expectedOptions, query);
     }
 
     @Test
     public void shouldNotIncludePreReleaseWhenUserInputsNoWithDifferentCasing() {
-        String expectedOptions = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=false&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String expectedOptions = "/GetUpdates()?packageIds='Zen.Log'&versions='0.0.1'&includePrerelease=false&includeAllVersions=true&$orderby=Version%20desc&$top=1";
         String query = nexusQueryBuilder.getQuery(PACKAGE_ID, "", "", "", "No");
         Assert.assertEquals(expectedOptions, query);
     }

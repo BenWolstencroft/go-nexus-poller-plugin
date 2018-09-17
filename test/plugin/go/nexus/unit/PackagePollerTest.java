@@ -43,8 +43,8 @@ public class PackagePollerTest {
     private static final String NAME = "SOME_NAME";
     private static final String USERNAME = "SOME_USERNAME";
     private static final String PASSWORD = "SOME_PASSWORD";
-    private static final String QUERYSTRING = "/GetUpdates()?packageIds='NUnit'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
-    private static final String PACKAGE_ID = "NUnit";
+    private static final String QUERYSTRING = "/GetUpdates()?packageIds='Zen.Log'&versions='0.0.1'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+    private static final String PACKAGE_ID = "Zen.Log";
     private Map sampleRequest;
 
     PackagePoller packagePoller;
@@ -118,7 +118,7 @@ public class PackagePollerTest {
     @Test
     public void shouldSucceedIfPackageExists() {
         setUpRequestWithPackageAndRepoConfigurations();
-        String revision = "NUnit3.5.1";
+        String revision = "Zen.Log-1.1.4";
         PackageRevision packageRevision = new PackageRevision(revision, new Date(), "USER", "REVISION_COMMENT", "TRACKBACK_URL", new HashMap());
         NexusFeedDocument mockDocument = mock(NexusFeedDocument.class);
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
@@ -135,12 +135,12 @@ public class PackagePollerTest {
 
     @Test
     public void shouldReturnEmptyMapIfNoNewerPackageExists() {
-        String version = "3.5.1";
+        String version = "1.1.4";
         Map sampleRequest = new RequestBuilder().withRespositoryConfiguration(URL, NAME, USERNAME, PASSWORD)
                 .withPackageConfiguration(PACKAGE_ID)
                 .withPreviousRevision(version)
                 .build();
-        String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='NUnit'&versions='" + version + "'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='Zen.Log'&versions='" + version + "'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
         NexusFeedDocument mockDocument = mock(NexusFeedDocument.class);
         when(mockDocument.getPackageRevision(true)).thenReturn(null);
         when(connectionHandler.getNexusFeedDocument(URL, NAME, latestRevisionSinceQueryString, USERNAME, PASSWORD)).thenReturn(mockDocument);
@@ -159,8 +159,8 @@ public class PackagePollerTest {
                 .withPackageConfiguration(PACKAGE_ID)
                 .withPreviousRevision(version)
                 .build();
-        String revision = "NUnit-3.5.1";
-        String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='NUnit'&versions='" + version + "'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
+        String revision = "Zen.Log-1.1.4";
+        String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='Zen.Log'&versions='" + version + "'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
         NexusFeedDocument mockDocument = mock(NexusFeedDocument.class);
         PackageRevision mockPackageRevision = mock(PackageRevision.class);
         when(mockDocument.getPackageRevision(true)).thenReturn(mockPackageRevision);

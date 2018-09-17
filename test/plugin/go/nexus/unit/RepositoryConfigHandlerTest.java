@@ -52,7 +52,7 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldErrorOutWhenRepoUrlIsNull() {
-        Map invalidBody = createRequestBodyWithCompleteMetadata(null, "nuget-official", "", "");
+        Map invalidBody = createRequestBodyWithCompleteMetadata(null, "nuget-sysdev", "", "");
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
 
@@ -70,7 +70,7 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldReturnEmptyErrorListWhenValidRepositoryConfigurations() {
-        Map validBody = createRequestBodyWithCompleteMetadata("https://repositories.pse.zen.co.uk", "nuget-official", "", "");
+        Map validBody = createRequestBodyWithCompleteMetadata("https://repositories.pse.zen.co.uk", "nuget-sysdev", "", "");
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(validBody);
 
@@ -80,7 +80,7 @@ public class RepositoryConfigHandlerTest {
     @Test
     public void shouldUseConnectionHandlerToCheckConnectionWithMetadata() {
         String SOME_URL = "https://repositories.pse.zen.co.uk";
-        String SOME_NAME = "nuget-official";
+        String SOME_NAME = "nuget-sysdev";
         String SOME_USERNAME = "SomeUsername";
         String SOME_PASSWORD = "somePassword";
 
@@ -92,7 +92,7 @@ public class RepositoryConfigHandlerTest {
     @Test
     public void shouldHandleCheckConnectionWhenOptionalMetadataIsNotProvided() {
         String SOME_URL = "https://repositories.pse.zen.co.uk";
-        String SOME_NAME = "nuget-official";
+        String SOME_NAME = "nuget-sysdev";
 
         repositoryConfigHandler.handleCheckRepositoryConnection(createUrlRequestBody(SOME_URL, SOME_NAME));
 

@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.stream.*;
@@ -55,7 +56,10 @@ public class NexusAPIClient {
     }
 
     private String getApiEndpoint(String endpoint, String searchValue) {
-        String endpointWithValue = endpoint.replace("{searchValue}", searchValue);
+        String endpointWithValue = endpoint;
+        if (searchValue != null) {
+            endpointWithValue = endpoint.replace("{searchValue}", searchValue);
+        }
         return this.url + API_ROOT + endpointWithValue;
     }
 
@@ -91,6 +95,7 @@ public class NexusAPIClient {
             String authToken = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
             connection.setRequestProperty("Authorization", authToken);
         }
+        connection.setRequestProperty("User-Agent", "https://github.com/BenWolstencroft/go-nexus-poller-plugin ");
         return connection;
     }
 
@@ -199,6 +204,17 @@ public class NexusAPIClient {
         return r;
     }
 
+    public List<Component> searchAll(String name) throws Exception {
+        ArrayList<Component> allItems = new ArrayList<Component>();
+        ListResult<Component> r = search(name, null);
+        allItems.addAll(r.items);
+        while(r.continuationToken != null) {
+            r = search(name, r.continuationToken);
+            allItems.addAll(r.items);
+        }
+        return allItems;
+    }
+
     public ListResult<Asset> searchAssets(String name, String continuationToken) throws Exception {
         HashMap<String, String> query = new HashMap<String, String>();
         query.put("repository", this.name);
@@ -208,6 +224,17 @@ public class NexusAPIClient {
         Type resultType = new TypeToken<ListResult<Asset>>() {}.getType();
         ListResult<Asset> r = g.fromJson(text, resultType);
         return r;
+    }
+
+    public List<Asset> searchAssetsAll(String name) throws Exception {
+        ArrayList<Asset> allItems = new ArrayList<Asset>();
+        ListResult<Asset> r = searchAssets(name, null);
+        allItems.addAll(r.items);
+        while(r.continuationToken != null) {
+            r = searchAssets(name, r.continuationToken);
+            allItems.addAll(r.items);
+        }
+        return allItems;
     }
 
     public ListResult<Task> tasks(String type) throws Exception {

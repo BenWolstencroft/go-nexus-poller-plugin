@@ -39,7 +39,7 @@ public class NexusController implements GoPlugin {
     private ConnectionHandler connectionHandler = new ConnectionHandler();
     private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
     private PackageConfigHandler packageConfigHandler = new PackageConfigHandler();
-    private PackagePoller packagePoller = new PackagePoller(connectionHandler, new NexusQueryBuilder());
+    private PackagePoller packagePoller = new PackagePoller(connectionHandler, new NexusResultFilterer());
 
 
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {

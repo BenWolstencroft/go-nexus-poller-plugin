@@ -20,6 +20,9 @@ package plugin.go.nexus;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 
+import plugin.go.nexus.models.Asset;
+import plugin.go.nexus.models.Component;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -27,14 +30,14 @@ import static utils.Constants.PACKAGE_CONFIGURATION;
 import static utils.Constants.REPOSITORY_CONFIGURATION;
 
 public class PackagePoller {
-    private NexusQueryBuilder queryBuilder;
+    private NexusResultFilterer resultFilterer;
     private ConnectionHandler connectionHandler;
 
     private static Logger logger = Logger.getLoggerFor(PluginConfigHandler.class);
 
-    public PackagePoller(ConnectionHandler connectionHandler, NexusQueryBuilder queryBuilder) {
+    public PackagePoller(ConnectionHandler connectionHandler, NexusResultFilterer resultFilterer) {
         this.connectionHandler = connectionHandler;
-        this.queryBuilder = queryBuilder;
+        this.resultFilterer = resultFilterer;
     }
 
     public Map handleCheckPackageConnection(Map requestBodyMap) {
@@ -86,21 +89,22 @@ public class PackagePoller {
         String packageId = parseValueFromEmbeddedMap(packageConfigMap, "PACKAGE_ID");
         String versionTo = parseValueFromEmbeddedMap(packageConfigMap, "POLL_VERSION_TO");
         String versionFrom = parseValueFromEmbeddedMap(packageConfigMap, "POLL_VERSION_FROM");
-        String includePreRelease = parseValueFromEmbeddedMap(packageConfigMap, "INCLUDE_PRE_RELEASE");
-        includePreRelease = (includePreRelease.isEmpty()) ? "yes" : includePreRelease;
+        String includePreReleaseSetting = parseValueFromEmbeddedMap(packageConfigMap, "INCLUDE_PRE_RELEASE");
+        Boolean includePreRelease = false;
+        if (includePreReleaseSetting != null && !includePreReleaseSetting.isEmpty() && includePreReleaseSetting.equals("yes")) {
+            includePreRelease = true;
+        }
 
-        String optionsForFeed = queryBuilder.getQuery(packageId, knownPackageRevision, versionFrom, versionTo, includePreRelease);
-
-        NexusFeedDocument nuGetFeedDocument = connectionHandler.getNexusFeedDocument(repoUrl, repoName, optionsForFeed, username, password);
-        return parsePackageDataFromDocument(nuGetFeedDocument, lastVersionKnown);
+        Component component = connectionHandler.getComponent(repoUrl, repoName, username, password, packageId, knownPackageRevision, versionFrom, versionTo, includePreRelease, resultFilterer);
+        return parsePackageDataFromComponent(component, lastVersionKnown);
     }
 
-    private Map parsePackageDataFromDocument(NexusFeedDocument nuGetFeedDocument, boolean lastVersionKnown) {
+    private Map parsePackageDataFromComponent(Component component, boolean lastVersionKnown) {
         Map packageRevisionMap = new HashMap();
-        if (nuGetFeedDocument == null || nuGetFeedDocument.getPackageRevision(lastVersionKnown) == null) {
+        if (component == null || component.getPackageRevision(lastVersionKnown) == null) {
             return packageRevisionMap;
         }
-        PackageRevision packageRevision = nuGetFeedDocument.getPackageRevision(lastVersionKnown);
+        PackageRevision packageRevision = component.getPackageRevision(lastVersionKnown);
         packageRevisionMap.put("revision", packageRevision.getRevision());
         packageRevisionMap.put("timestamp", formatTimestamp(packageRevision.getTimestamp()));
         packageRevisionMap.put("user", packageRevision.getUser());

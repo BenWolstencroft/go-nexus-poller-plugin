@@ -29,13 +29,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +41,7 @@ public class ConnectionHandler {
     public Map checkConnectionToUrlWithMetadata(String url, String repoName, String username, String password) {
         NexusAPIClient client = new NexusAPIClient(url, repoName, username, password);
         try {
-            List<Repository> repositories = client.getRepositories();
+            List<Repository> repositories = client.repositories();
             if (repositories.stream().noneMatch(r -> r.name.equals(repoName))) {
                 Map responseMap = formatConnectionResponse("failure", "No repo named " + repoName);
                 return responseMap;
@@ -87,15 +82,6 @@ public class ConnectionHandler {
         if (repoConnectionResponseMap.get("status") == "failure") {
             return false;
         } else return true;
-    }
-
-    // We use $metada because nuget uses the ODATA format.
-    // This distinguishes nuget feeds from generic sites (though it would accept as valid a non-nuget feed ODATA site)
-    private String metadataUrl(String url) {
-        if (!url.endsWith("/")) {
-            url += "/";
-        }
-        return url + "$metadata";
     }
 
     private static String convertDocumentToString(Document doc) {

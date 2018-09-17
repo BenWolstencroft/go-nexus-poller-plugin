@@ -21,13 +21,21 @@ import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.tw.go.plugin.util.HttpRepoURL;
 import org.w3c.dom.Document;
 
+import plugin.go.nexus.models.Repository;
+
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +44,13 @@ public class ConnectionHandler {
     private static Logger logger = Logger.getLoggerFor(ConnectionHandler.class);
 
     public Map checkConnectionToUrlWithMetadata(String url, String repoName, String username, String password) {
-        HttpRepoURL repoConnection = new HttpRepoURL(metadataUrl(url), username, password);
+        NexusAPIClient client = new NexusAPIClient(url, repoName, username, password);
         try {
-            repoConnection.checkConnection();
+            List<Repository> repositories = client.getRepositories();
+            if (repositories.stream().noneMatch(r -> r.name.equals(repoName))) {
+                Map responseMap = formatConnectionResponse("failure", "No repo named " + repoName);
+                return responseMap;
+            }
         } catch (Exception e) {
             Map responseMap = formatConnectionResponse("failure", "Unsuccessful Connection");
             return responseMap;

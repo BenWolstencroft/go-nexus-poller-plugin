@@ -65,11 +65,12 @@ public class NexusPluginTest {
 
     @Test
     public void shouldReturnNoErrorsForCorrectRepositoryConfiguration() {
-        String requestBody = "{\"repository-configuration\":" +
-                "{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
-                "{\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
+        String requestBody = "{\"repository-configuration\":{" +
+                "\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
+                "\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
                 "\"USERNAME\":{\"value\":\"\"}," +
-                "\"PASSWORD\":{\"value\":\"\"}}}";
+                "\"PASSWORD\":{\"value\":\"\"}}" +
+                "}";
         when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
@@ -83,11 +84,12 @@ public class NexusPluginTest {
 
     @Test
     public void shouldSuccessfullyConnectToRepository() {
-        String requestBody = "{\"repository-configuration\":" +
-                "{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
-                "{\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
+        String requestBody = "{\"repository-configuration\":{" +
+                "\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
+                "\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
                 "\"USERNAME\":{\"value\":\"\"}," +
-                "\"PASSWORD\":{\"value\":\"\"}}}";
+                "\"PASSWORD\":{\"value\":\"\"}}" +
+                "}";
         String expectedResponseAsString = "{\"messages\":[\"Successfully connected to nexus url provided\"],\"status\":\"success\"}";
         when(goApiPluginRequest.requestName()).thenReturn(CHECK_REPOSITORY_CONNECTION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);

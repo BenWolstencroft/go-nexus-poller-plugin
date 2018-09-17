@@ -15,10 +15,10 @@
  *
  */
 
-package plugin.go.nuget;
+package plugin.go.nexus;
 
-public class NuGetException extends RuntimeException {
-    public NuGetException(String message) {
+public class NexusException extends RuntimeException {
+    public NexusException(String message) {
         super(message);
     }
 }

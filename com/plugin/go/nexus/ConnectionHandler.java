@@ -15,7 +15,7 @@
  *
  */
 
-package plugin.go.nuget;
+package plugin.go.nexus;
 
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.tw.go.plugin.util.HttpRepoURL;
@@ -48,7 +48,7 @@ public class ConnectionHandler {
         return responseMap;
     }
 
-    public NuGetFeedDocument getNuGetFeedDocument(String baseUrl, String queryParams, String username, String password) {
+    public NexusFeedDocument getNexusFeedDocument(String baseUrl, String queryParams, String username, String password) {
         Map repoConnectionResponseMap = checkConnectionToUrlWithMetadata(baseUrl, username, password);
         if (!repoConnectionSuccessful(repoConnectionResponseMap)) {
             return null;
@@ -56,7 +56,7 @@ public class ConnectionHandler {
         try {
             Document xmlDocument = new HttpRepoURL(baseUrl, username, password).download(baseUrl + queryParams);
             logger.info("Package information is \n" + convertDocumentToString(xmlDocument));
-            return new NuGetFeedDocument(xmlDocument);
+            return new NexusFeedDocument(xmlDocument);
         } catch (RuntimeException e) {
             logger.info(e.getMessage());
         }

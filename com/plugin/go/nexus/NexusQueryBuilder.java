@@ -15,9 +15,9 @@
  *
  */
 
-package plugin.go.nuget;
+package plugin.go.nexus;
 
-public class NugetQueryBuilder {
+public class NexusQueryBuilder {
 
     public String getQuery(String packageId, String knownVersion, String versionFrom, String versionTo, String includePreRelease) {
         StringBuilder query = new StringBuilder();

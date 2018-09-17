@@ -1,17 +1,15 @@
-NuGet Poller Plugin for GoCD
+Nexus Repository Manager Poller Plugin for GoCD
 ============================
 
 Introduction
 ------------
-This is a [package material](https://docs.go.cd/current/extension_points/package_repository_extension.html) plugin for [GoCD](http://www.go.cd/). It is currently capable of polling [NuGet](http://www.nuget.org/) repositories running [API V2](http://chris.eldredge.io/blog/2013/02/25/fun-with-nuget-rest-api/).
+This is a [package material](https://docs.go.cd/current/extension_points/package_repository_extension.html) plugin for [GoCD](http://www.go.cd/). It is currently capable of polling [Nexus](https://www.sonatype.com/nexus-repository-sonatype) repositories.
 
 The behaviour and capabilities of the plugin is determined to a significant extent by that of the package material extension point in GoCD. Be sure to read the package material documentation before using this plugin.
 
-This is a pure Java plugin. It does not need nuget.exe. You may however require nuget.exe on the agents, if you need to download the packages using NuGet.
-
 Installation
 ------------
-Just drop [go-nuget-poller.jar](https://github.com/gocd-contrib/go-nuget-poller-plugin-2.0/releases) into plugins/external directory and restart GoCD. More details [here](https://docs.go.cd/current/extension_points/plugin_user_guide.html)
+Just drop [go-nexus-poller.jar](https://github.com/BenWolstencroft/go-nexus-poller-plugin/releases) into plugins/external directory and restart GoCD. More details [here](https://docs.go.cd/current/extension_points/plugin_user_guide.html)
 
 Compatibility
 ------------
@@ -21,7 +19,7 @@ Repository definition
 ---------------------
 ![Add a NuGet repository][1]
 
-NuGet Server URL must be a valid http or https URL. For example, to add nuget.org as a repository, specify the URL as http://nuget.org/api/v2. The plugin will try to access URL$metadata to report successful connection. Basic authentication (user:password@host/path) is supported. We recommend only using authentication over HTTPS.
+Nexus Server URL must be a valid http or https URL. The plugin will try to access URL/services/rest/v1/repositories to report successful connection. Basic authentication (user:password@host/path) is supported. We recommend only using authentication over HTTPS.
 
 Package definition
 ------------------
@@ -29,5 +27,5 @@ Click check package to make sure the plugin understands what you are looking for
 
 ![Define a package as material for a pipeline][2]
 
-[1]: img/add-nuget-repo.png  "Define NuGet Package Repository"
-[2]: img/add-nuget-package.png  "Define package as material for a pipeline"
+[1]: img/add-nexus-repo.png  "Define Nexus Package Repository"
+[2]: img/add-nexus-package.png  "Define package as material for a pipeline"

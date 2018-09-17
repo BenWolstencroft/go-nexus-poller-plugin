@@ -15,7 +15,7 @@
  *
  */
 
-package plugin.go.nuget;
+package plugin.go.nexus;
 
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
@@ -27,12 +27,12 @@ import static utils.Constants.PACKAGE_CONFIGURATION;
 import static utils.Constants.REPOSITORY_CONFIGURATION;
 
 public class PackagePoller {
-    private NugetQueryBuilder queryBuilder;
+    private NexusQueryBuilder queryBuilder;
     private ConnectionHandler connectionHandler;
 
     private static Logger logger = Logger.getLoggerFor(PluginConfigHandler.class);
 
-    public PackagePoller(ConnectionHandler connectionHandler, NugetQueryBuilder queryBuilder) {
+    public PackagePoller(ConnectionHandler connectionHandler, NexusQueryBuilder queryBuilder) {
         this.connectionHandler = connectionHandler;
         this.queryBuilder = queryBuilder;
     }
@@ -90,11 +90,11 @@ public class PackagePoller {
 
         String optionsForFeed = queryBuilder.getQuery(packageId, knownPackageRevision, versionFrom, versionTo, includePreRelease);
 
-        NuGetFeedDocument nuGetFeedDocument = connectionHandler.getNuGetFeedDocument(repoUrl, optionsForFeed, username, password);
+        NexusFeedDocument nuGetFeedDocument = connectionHandler.getNexusFeedDocument(repoUrl, optionsForFeed, username, password);
         return parsePackageDataFromDocument(nuGetFeedDocument, lastVersionKnown);
     }
 
-    private Map parsePackageDataFromDocument(NuGetFeedDocument nuGetFeedDocument, boolean lastVersionKnown) {
+    private Map parsePackageDataFromDocument(NexusFeedDocument nuGetFeedDocument, boolean lastVersionKnown) {
         Map packageRevisionMap = new HashMap();
         if (nuGetFeedDocument == null || nuGetFeedDocument.getPackageRevision(lastVersionKnown) == null) {
             return packageRevisionMap;

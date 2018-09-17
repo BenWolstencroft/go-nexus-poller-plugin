@@ -15,13 +15,13 @@
  *
  */
 
-package plugin.go.nuget.unit;
+package plugin.go.nexus.unit;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import plugin.go.nuget.PackageConfigHandler;
-import plugin.go.nuget.builders.RequestBuilder;
+import plugin.go.nexus.PackageConfigHandler;
+import plugin.go.nexus.builders.RequestBuilder;
 
 import java.util.List;
 import java.util.Map;

@@ -15,7 +15,7 @@
  *
  */
 
-package plugin.go.nuget;
+package plugin.go.nexus;
 
 import java.util.ArrayList;
 import java.util.HashMap;

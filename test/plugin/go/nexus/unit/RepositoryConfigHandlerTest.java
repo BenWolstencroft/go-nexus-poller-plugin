@@ -15,13 +15,13 @@
  *
  */
 
-package plugin.go.nuget.unit;
+package plugin.go.nexus.unit;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import plugin.go.nuget.ConnectionHandler;
-import plugin.go.nuget.RepositoryConfigHandler;
+import plugin.go.nexus.ConnectionHandler;
+import plugin.go.nexus.RepositoryConfigHandler;
 
 import java.util.HashMap;
 import java.util.List;

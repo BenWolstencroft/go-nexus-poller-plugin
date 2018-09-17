@@ -15,7 +15,7 @@
  *
  */
 
-package plugin.go.nuget;
+package plugin.go.nexus;
 
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
@@ -33,13 +33,13 @@ import java.util.Map;
 import static utils.Constants.*;
 
 @Extension
-public class NugetController implements GoPlugin {
+public class NexusController implements GoPlugin {
     private GoApplicationAccessor accessor;
-    private static Logger logger = Logger.getLoggerFor(NugetController.class);
+    private static Logger logger = Logger.getLoggerFor(NexusController.class);
     private ConnectionHandler connectionHandler = new ConnectionHandler();
     private RepositoryConfigHandler repositoryConfigHandler = new RepositoryConfigHandler(connectionHandler);
     private PackageConfigHandler packageConfigHandler = new PackageConfigHandler();
-    private PackagePoller packagePoller = new PackagePoller(connectionHandler, new NugetQueryBuilder());
+    private PackagePoller packagePoller = new PackagePoller(connectionHandler, new NexusQueryBuilder());
 
 
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {

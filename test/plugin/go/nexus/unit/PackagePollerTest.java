@@ -15,18 +15,18 @@
  *
  */
 
-package plugin.go.nuget.unit;
+package plugin.go.nexus.unit;
 
 
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import plugin.go.nuget.ConnectionHandler;
-import plugin.go.nuget.NuGetFeedDocument;
-import plugin.go.nuget.NugetQueryBuilder;
-import plugin.go.nuget.PackagePoller;
-import plugin.go.nuget.builders.RequestBuilder;
+import plugin.go.nexus.ConnectionHandler;
+import plugin.go.nexus.NexusFeedDocument;
+import plugin.go.nexus.NexusQueryBuilder;
+import plugin.go.nexus.PackagePoller;
+import plugin.go.nexus.builders.RequestBuilder;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,7 +52,7 @@ public class PackagePollerTest {
     @Before
     public void setup() {
         connectionHandler = mock(ConnectionHandler.class);
-        packagePoller = new PackagePoller(connectionHandler, new NugetQueryBuilder());
+        packagePoller = new PackagePoller(connectionHandler, new NexusQueryBuilder());
     }
 
     public void setUpRequestWithPackageAndRepoConfigurations() {
@@ -65,13 +65,13 @@ public class PackagePollerTest {
         Map data = new HashMap();
         data.put("VERSION", "3.5.0");
         PackageRevision packageRevision = new PackageRevision("REVISION", buildDate(), "USER", "REVISION_COMMENT", "TRACKBACK_URL", data);
-        NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
+        NexusFeedDocument mockDocument = mock(NexusFeedDocument.class);
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
-        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
+        when(connectionHandler.getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
         Map revisionMap = packagePoller.handleLatestRevision(sampleRequest);
 
-        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
+        verify(connectionHandler).getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
         Assert.assertEquals(packageRevision.getRevision(), revisionMap.get("revision"));
         Assert.assertThat((String) revisionMap.get("timestamp"), containsString("2016-09-27"));
         Assert.assertEquals(packageRevision.getUser(), revisionMap.get("user"));
@@ -83,7 +83,7 @@ public class PackagePollerTest {
     @Test
     public void shouldReturnEmptyMapIfNoPackageIsFound() {
         setUpRequestWithPackageAndRepoConfigurations();
-        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
+        when(connectionHandler.getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
         Map revisionMap = packagePoller.handleLatestRevision(sampleRequest);
         Assert.assertTrue(revisionMap.isEmpty());
     }
@@ -91,11 +91,11 @@ public class PackagePollerTest {
     @Test
     public void shouldFailIfPackageIsNull() {
         setUpRequestWithPackageAndRepoConfigurations();
-        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
+        when(connectionHandler.getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(null);
 
         Map revisionMap = packagePoller.handleCheckPackageConnection(sampleRequest);
 
-        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
+        verify(connectionHandler).getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
         Assert.assertEquals("failure", revisionMap.get("status"));
         Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
@@ -104,11 +104,11 @@ public class PackagePollerTest {
     @Test
     public void shouldFailIfPackageIsEmptyMap() {
         setUpRequestWithPackageAndRepoConfigurations();
-        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(new NuGetFeedDocument(null));
+        when(connectionHandler.getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(new NexusFeedDocument(null));
 
         Map revisionMap = packagePoller.handleCheckPackageConnection(sampleRequest);
 
-        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
+        verify(connectionHandler).getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
         Assert.assertEquals("failure", revisionMap.get("status"));
         Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "No packages found");
@@ -119,13 +119,13 @@ public class PackagePollerTest {
         setUpRequestWithPackageAndRepoConfigurations();
         String revision = "NUnit3.5.1";
         PackageRevision packageRevision = new PackageRevision(revision, new Date(), "USER", "REVISION_COMMENT", "TRACKBACK_URL", new HashMap());
-        NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
+        NexusFeedDocument mockDocument = mock(NexusFeedDocument.class);
         when(mockDocument.getPackageRevision(false)).thenReturn(packageRevision);
-        when(connectionHandler.getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
+        when(connectionHandler.getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
         Map revisionMap = packagePoller.handleCheckPackageConnection(sampleRequest);
 
-        verify(connectionHandler).getNuGetFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
+        verify(connectionHandler).getNexusFeedDocument(URL, QUERYSTRING, USERNAME, PASSWORD);
 
         Assert.assertEquals("success", revisionMap.get("status"));
         Assert.assertEquals(((List) revisionMap.get("messages")).get(0), "Successfully found revision: " + revision);
@@ -140,13 +140,13 @@ public class PackagePollerTest {
                 .withPreviousRevision(version)
                 .build();
         String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='NUnit'&versions='" + version + "'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
-        NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
+        NexusFeedDocument mockDocument = mock(NexusFeedDocument.class);
         when(mockDocument.getPackageRevision(true)).thenReturn(null);
-        when(connectionHandler.getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD)).thenReturn(mockDocument);
+        when(connectionHandler.getNexusFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
         Map revisionMap = packagePoller.handleLatestRevisionSince(sampleRequest);
 
-        verify(connectionHandler).getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
+        verify(connectionHandler).getNexusFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
 
         Assert.assertTrue(revisionMap.isEmpty());
     }
@@ -160,16 +160,16 @@ public class PackagePollerTest {
                 .build();
         String revision = "NUnit-3.5.1";
         String latestRevisionSinceQueryString = "/GetUpdates()?packageIds='NUnit'&versions='" + version + "'&includePrerelease=true&includeAllVersions=true&$orderby=Version%20desc&$top=1";
-        NuGetFeedDocument mockDocument = mock(NuGetFeedDocument.class);
+        NexusFeedDocument mockDocument = mock(NexusFeedDocument.class);
         PackageRevision mockPackageRevision = mock(PackageRevision.class);
         when(mockDocument.getPackageRevision(true)).thenReturn(mockPackageRevision);
         when(mockPackageRevision.getRevision()).thenReturn(revision);
         when(mockPackageRevision.getTimestamp()).thenReturn(new Date());
-        when(connectionHandler.getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD)).thenReturn(mockDocument);
+        when(connectionHandler.getNexusFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD)).thenReturn(mockDocument);
 
         Map revisionMap = packagePoller.handleLatestRevisionSince(sampleRequest);
 
-        verify(connectionHandler).getNuGetFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
+        verify(connectionHandler).getNexusFeedDocument(URL, latestRevisionSinceQueryString, USERNAME, PASSWORD);
 
         Assert.assertEquals(revision, revisionMap.get("revision"));
     }

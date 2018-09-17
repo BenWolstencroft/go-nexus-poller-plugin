@@ -16,15 +16,15 @@
   ~
   -->
 
-<go-plugin id="nuget" version="1">
+<go-plugin id="nexus" version="1">
     <about>
-        <name>Nuget plugin</name>
+        <name>Nexus plugin</name>
         <version>1.0.0</version>
         <target-go-version>15.3.0</target-go-version>
-        <description>Plugin that polls a Nuget Server using the new API</description>
+        <description>Plugin that polls a Nexus Repository Manager</description>
         <vendor>
-            <name>ThoughtWorks Go Plugin Team</name>
-            <url>www.thoughtworks.com</url>
+            <name>Ben Wolstencroft</name>
+            <url>https://github.com/BenWolstencroft</url>
         </vendor>
     </about>
 </go-plugin>

@@ -15,7 +15,7 @@
  *
  */
 
-package plugin.go.nuget.e2e;
+package plugin.go.nexus.e2e;
 
 
 import com.google.gson.GsonBuilder;
@@ -24,7 +24,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import plugin.go.nuget.NugetController;
+import plugin.go.nexus.NexusController;
 
 import java.util.List;
 import java.util.Map;
@@ -33,15 +33,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static utils.Constants.*;
 
-public class NugetPluginTest {
+public class NexusPluginTest {
 
-    NugetController nugetController;
+    NexusController nexusController;
     GoPluginApiRequest goApiPluginRequest;
 
 
     @Before
     public void setUp() {
-        nugetController = new NugetController();
+        nexusController = new NexusController();
         goApiPluginRequest = mock(GoPluginApiRequest.class);
 
     }
@@ -55,7 +55,7 @@ public class NugetPluginTest {
         Map expectedRepositoryConfigurationMap = (Map) new GsonBuilder().create().fromJson(expectedRepositoryConfiguration, Object.class);
         when(goApiPluginRequest.requestName()).thenReturn(REPOSITORY_CONFIGURATION);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
         Map responseBodyMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
         Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
@@ -71,7 +71,7 @@ public class NugetPluginTest {
         when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
 
         List responseBodyList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
@@ -89,7 +89,7 @@ public class NugetPluginTest {
         when(goApiPluginRequest.requestName()).thenReturn(CHECK_REPOSITORY_CONNECTION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
 
         Map responseAsMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
         Map expectedResponse = (Map) new GsonBuilder().create().fromJson(expectedResponseAsString, Object.class);
@@ -108,7 +108,7 @@ public class NugetPluginTest {
 
         when(goApiPluginRequest.requestName()).thenReturn(PACKAGE_CONFIGURATION);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
         Map responseBodyMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
         Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
@@ -122,7 +122,7 @@ public class NugetPluginTest {
         when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
 
         List responseBodyList = (List) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
 
@@ -141,7 +141,7 @@ public class NugetPluginTest {
         when(goApiPluginRequest.requestName()).thenReturn(CHECK_PACKAGE_CONNECTION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
 
         Map responseAsMap = (Map) new GsonBuilder().create().fromJson(response.responseBody(), Object.class);
         Map expectedResponse = (Map) new GsonBuilder().create().fromJson(expectedResponseAsString, Object.class);
@@ -160,7 +160,7 @@ public class NugetPluginTest {
         when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
 
         Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
     }
@@ -178,7 +178,7 @@ public class NugetPluginTest {
         when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION_SINCE);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
-        GoPluginApiResponse response = nugetController.handle(goApiPluginRequest);
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
 
         Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
     }

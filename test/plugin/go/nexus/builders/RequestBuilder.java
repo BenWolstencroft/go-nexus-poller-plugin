@@ -15,7 +15,7 @@
  *
  */
 
-package plugin.go.nuget.builders;
+package plugin.go.nexus.builders;
 
 import java.util.HashMap;
 import java.util.Map;

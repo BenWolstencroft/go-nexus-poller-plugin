@@ -15,7 +15,7 @@
  *
  */
 
-package plugin.go.nuget;
+package plugin.go.nexus;
 
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 import org.w3c.dom.Document;
@@ -25,12 +25,12 @@ import org.w3c.dom.NodeList;
 
 import java.util.Date;
 
-public class NuGetFeedDocument {
+public class NexusFeedDocument {
     public static final String SCHEMA_ADO_DATASERVICES = "http://schemas.microsoft.com/ado/2007/08/dataservices";
     public static final String SCHEMA_ADO_DATASERVICES_METADATA = "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata";
     private final Document xmlFeed;
 
-    public NuGetFeedDocument(Document xmlDocument) {
+    public NexusFeedDocument(Document xmlDocument) {
         this.xmlFeed = xmlDocument;
     }
 
@@ -77,10 +77,10 @@ public class NuGetFeedDocument {
     public PackageRevision getPackageRevision(boolean lastVersionKnown) {
         if (getEntries().getLength() == 0) {
             if (lastVersionKnown) return null;
-            else throw new NuGetException("No such package found");
+            else throw new NexusException("No such package found");
         }
         if (getEntries().getLength() > 1)
-            throw new NuGetException(String.format("Multiple entries in feed for %s %s", getEntryTitle(), getPackageVersion()));
+            throw new NexusException(String.format("Multiple entries in feed for %s %s", getEntryTitle(), getPackageVersion()));
         PackageRevision result = new PackageRevision(getPackageLabel(), getPublishedDate(), getAuthor(), getReleaseNotes(), getProjectUrl());
         result.addData("LOCATION", getPackageLocation());
         result.addData("VERSION", getPackageVersion());

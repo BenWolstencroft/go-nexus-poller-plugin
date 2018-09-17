@@ -31,11 +31,14 @@ public class RequestBuilder {
         request = new HashMap();
     }
 
-    public RequestBuilder withRespositoryConfiguration(String url, String username, String password) {
+    public RequestBuilder withRespositoryConfiguration(String url, String repoName, String username, String password) {
+        Map fieldsMap = new HashMap();
         Map urlMap = new HashMap();
         urlMap.put("value", url);
-        Map fieldsMap = new HashMap();
         fieldsMap.put("REPO_URL", urlMap);
+        Map nameMap = new HashMap();
+        nameMap.put("value", repoName);
+        fieldsMap.put("REPO_NAME", nameMap);
         Map usernameMap = new HashMap();
         usernameMap.put("value", username);
         fieldsMap.put("USERNAME", usernameMap);

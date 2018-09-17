@@ -78,6 +78,7 @@ public class PackagePoller {
         Map repoConfigMap = (Map) request.get(REPOSITORY_CONFIGURATION);
 
         String repoUrl = parseValueFromEmbeddedMap(repoConfigMap, "REPO_URL");
+        String repoName = parseValueFromEmbeddedMap(repoConfigMap, "REPO_NAME");
         String username = parseValueFromEmbeddedMap(repoConfigMap, "USERNAME");
         String password = parseValueFromEmbeddedMap(repoConfigMap, "PASSWORD");
 
@@ -90,7 +91,7 @@ public class PackagePoller {
 
         String optionsForFeed = queryBuilder.getQuery(packageId, knownPackageRevision, versionFrom, versionTo, includePreRelease);
 
-        NexusFeedDocument nuGetFeedDocument = connectionHandler.getNexusFeedDocument(repoUrl, optionsForFeed, username, password);
+        NexusFeedDocument nuGetFeedDocument = connectionHandler.getNexusFeedDocument(repoUrl, repoName, optionsForFeed, username, password);
         return parsePackageDataFromDocument(nuGetFeedDocument, lastVersionKnown);
     }
 

@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static utils.Constants.REPOSITORY_CONFIGURATION;
+
 public class RepositoryConfigHandler extends PluginConfigHandler {
 
     private ConnectionHandler connectionHandler;
@@ -33,9 +35,10 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
     public Map handleConfiguration() {
         Map repositoryConfig = new HashMap();
 
-        repositoryConfig.put("REPO_URL", createConfigurationField("Repository Url", "0", false, true, true));
-        repositoryConfig.put("USERNAME", createConfigurationField("Username", "1", false, false, false));
-        repositoryConfig.put("PASSWORD", createConfigurationField("Password (use only with https)", "2", true, false, false));
+        repositoryConfig.put("REPO_URL", createConfigurationField("Nexus Url", "0", false, true, true));
+        repositoryConfig.put("REPO_NAME", createConfigurationField("Repository Name", "1", false, true, true));
+        repositoryConfig.put("USERNAME", createConfigurationField("Username", "2", false, false, false));
+        repositoryConfig.put("PASSWORD", createConfigurationField("Password (use only with https)", "3", true, false, false));
 
         return repositoryConfig;
     }
@@ -43,8 +46,9 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
     public List handleValidateConfiguration(Map request) {
         List validationList = new ArrayList();
 
-        Map configMap = (Map) request.get("repository-configuration");
+        Map configMap = (Map) request.get(REPOSITORY_CONFIGURATION);
         Map urlMap = (Map) configMap.get("REPO_URL");
+        Map nameMap = (Map) configMap.get("REPO_NAME");
 
         Object repoUrl = urlMap.get("value");
         if (repoUrl == null || repoUrl.equals("")) {
@@ -54,17 +58,26 @@ public class RepositoryConfigHandler extends PluginConfigHandler {
             validationList.add(errors);
         }
 
+        Object repoName = nameMap.get("value");
+        if (repoName == null || repoName.equals("")) {
+            Map errors = new HashMap();
+            errors.put("key", "REPO_NAME");
+            errors.put("message", "Name cannot be empty");
+            validationList.add(errors);
+        }
+
         return validationList;
     }
 
     public Map handleCheckRepositoryConnection(Map request) {
-        Map configMap = (Map) request.get("repository-configuration");
+        Map configMap = (Map) request.get(REPOSITORY_CONFIGURATION);
 
         String repoUrl = parseValueFromEmbeddedMap(configMap, "REPO_URL");
+        String repoName = parseValueFromEmbeddedMap(configMap, "REPO_NAME");
         String username = parseValueFromEmbeddedMap(configMap, "USERNAME");
         String password = parseValueFromEmbeddedMap(configMap, "PASSWORD");
 
-        return connectionHandler.checkConnectionToUrlWithMetadata(repoUrl, username, password);
+        return connectionHandler.checkConnectionToUrlWithMetadata(repoUrl, repoName, username, password);
     }
 
     private String parseValueFromEmbeddedMap(Map configMap, String fieldName) {

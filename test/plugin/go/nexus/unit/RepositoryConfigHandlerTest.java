@@ -43,7 +43,7 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldErrorWhenInvalidRepositoryConfiguration() {
-        Map invalidBody = createRequestBodyWithCompleteMetadata("", "", "");
+        Map invalidBody = createRequestBodyWithCompleteMetadata("", "", "", "");
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
 
@@ -52,7 +52,16 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldErrorOutWhenRepoUrlIsNull() {
-        Map invalidBody = createRequestBodyWithCompleteMetadata(null, "", "");
+        Map invalidBody = createRequestBodyWithCompleteMetadata(null, "nuget-official", "", "");
+
+        List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
+
+        Assert.assertFalse(errorList.isEmpty());
+    }
+
+    @Test
+    public void shouldErrorOutWhenRepoNameIsNull() {
+        Map invalidBody = createRequestBodyWithCompleteMetadata("https://repositories.pse.zen.co.uk", null, "", "");
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(invalidBody);
 
@@ -61,7 +70,7 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldReturnEmptyErrorListWhenValidRepositoryConfigurations() {
-        Map validBody = createRequestBodyWithCompleteMetadata("http://testsite.com", "", "");
+        Map validBody = createRequestBodyWithCompleteMetadata("https://repositories.pse.zen.co.uk", "nuget-official", "", "");
 
         List errorList = repositoryConfigHandler.handleValidateConfiguration(validBody);
 
@@ -70,45 +79,57 @@ public class RepositoryConfigHandlerTest {
 
     @Test
     public void shouldUseConnectionHandlerToCheckConnectionWithMetadata() {
-        String SOME_URL = "http://www.nuget.com/";
+        String SOME_URL = "https://repositories.pse.zen.co.uk";
+        String SOME_NAME = "nuget-official";
         String SOME_USERNAME = "SomeUsername";
         String SOME_PASSWORD = "somePassword";
 
-        repositoryConfigHandler.handleCheckRepositoryConnection(createRequestBodyWithCompleteMetadata(SOME_URL, SOME_USERNAME, SOME_PASSWORD));
+        repositoryConfigHandler.handleCheckRepositoryConnection(createRequestBodyWithCompleteMetadata(SOME_URL, SOME_NAME, SOME_USERNAME, SOME_PASSWORD));
 
-        verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, SOME_USERNAME, SOME_PASSWORD);
+        verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, SOME_NAME, SOME_USERNAME, SOME_PASSWORD);
     }
 
     @Test
     public void shouldHandleCheckConnectionWhenOptionalMetadataIsNotProvided() {
-        String SOME_URL = "http://www.nuget.com/";
+        String SOME_URL = "https://repositories.pse.zen.co.uk";
+        String SOME_NAME = "nuget-official";
 
-        repositoryConfigHandler.handleCheckRepositoryConnection(createUrlRequestBody(SOME_URL));
+        repositoryConfigHandler.handleCheckRepositoryConnection(createUrlRequestBody(SOME_URL, SOME_NAME));
 
-        verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, null, null);
+        verify(connectionHandler).checkConnectionToUrlWithMetadata(SOME_URL, SOME_NAME, null, null);
     }
 
-    private Map createUrlRequestBody(String url) {
+    private Map createRepoConfigMap(String url, String repoName) {
+        Map fieldsMap = new HashMap();
         Map urlMap = new HashMap();
         urlMap.put("value", url);
-        Map fieldsMap = new HashMap();
         fieldsMap.put("REPO_URL", urlMap);
-        Map bodyMap = new HashMap();
-        bodyMap.put(REPOSITORY_CONFIGURATION, fieldsMap);
-        return bodyMap;
+        Map nameMap = new HashMap();
+        nameMap.put("value", repoName);
+        fieldsMap.put("REPO_NAME", nameMap);
+        return fieldsMap;
     }
 
-    private Map createRequestBodyWithCompleteMetadata(String url, String username, String password) {
-        Map urlMap = new HashMap();
-        urlMap.put("value", url);
-        Map fieldsMap = new HashMap();
-        fieldsMap.put("REPO_URL", urlMap);
+    private Map createRepoConfigMapWithCompleteMetadata(String url, String repoName, String username, String password) {
+        Map fieldsMap = createRepoConfigMap(url, repoName);
         Map usernameMap = new HashMap();
         usernameMap.put("value", username);
         fieldsMap.put("USERNAME", usernameMap);
         Map passwordMap = new HashMap();
         passwordMap.put("value", password);
         fieldsMap.put("PASSWORD", passwordMap);
+        return fieldsMap;
+    }
+
+    private Map createUrlRequestBody(String url, String repoName) {
+        Map fieldsMap = createRepoConfigMap(url, repoName);
+        Map bodyMap = new HashMap();
+        bodyMap.put(REPOSITORY_CONFIGURATION, fieldsMap);
+        return bodyMap;
+    }
+
+    private Map createRequestBodyWithCompleteMetadata(String url, String repoName, String username, String password) {
+        Map fieldsMap = createRepoConfigMapWithCompleteMetadata(url, repoName, username, password);
         Map bodyMap = new HashMap();
         bodyMap.put(REPOSITORY_CONFIGURATION, fieldsMap);
         return bodyMap;

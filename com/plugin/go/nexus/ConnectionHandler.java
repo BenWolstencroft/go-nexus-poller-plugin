@@ -35,7 +35,7 @@ import java.util.Map;
 public class ConnectionHandler {
     private static Logger logger = Logger.getLoggerFor(ConnectionHandler.class);
 
-    public Map checkConnectionToUrlWithMetadata(String url, String username, String password) {
+    public Map checkConnectionToUrlWithMetadata(String url, String repoName, String username, String password) {
         HttpRepoURL repoConnection = new HttpRepoURL(metadataUrl(url), username, password);
         try {
             repoConnection.checkConnection();
@@ -44,12 +44,12 @@ public class ConnectionHandler {
             return responseMap;
         }
 
-        Map responseMap = formatConnectionResponse("success", "Successfully connected to repository url provided");
+        Map responseMap = formatConnectionResponse("success", "Successfully connected to nexus url provided");
         return responseMap;
     }
 
-    public NexusFeedDocument getNexusFeedDocument(String baseUrl, String queryParams, String username, String password) {
-        Map repoConnectionResponseMap = checkConnectionToUrlWithMetadata(baseUrl, username, password);
+    public NexusFeedDocument getNexusFeedDocument(String baseUrl, String repoName, String queryParams, String username, String password) {
+        Map repoConnectionResponseMap = checkConnectionToUrlWithMetadata(baseUrl, repoName, username, password);
         if (!repoConnectionSuccessful(repoConnectionResponseMap)) {
             return null;
         }

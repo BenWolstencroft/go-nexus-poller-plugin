@@ -48,9 +48,10 @@ public class NexusPluginTest {
 
     @Test
     public void shouldReturnConfigurationsWhenHandlingRepositoryConfigurationRequest() {
-        String expectedRepositoryConfiguration = "{\"PASSWORD\":{\"display-order\":\"2\",\"display-name\":\"Password (use only with https)\",\"part-of-identity\":false,\"secure\":true,\"required\":false}," +
-                "\"USERNAME\":{\"display-order\":\"1\",\"display-name\":\"Username\",\"part-of-identity\":false,\"secure\":false,\"required\":false}," +
-                "\"REPO_URL\":{\"display-order\":\"0\",\"display-name\":\"Repository Url\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
+        String expectedRepositoryConfiguration = "{\"PASSWORD\":{\"display-order\":\"3\",\"display-name\":\"Password (use only with https)\",\"part-of-identity\":false,\"secure\":true,\"required\":false}," +
+                "\"USERNAME\":{\"display-order\":\"2\",\"display-name\":\"Username\",\"part-of-identity\":false,\"secure\":false,\"required\":false}," +
+                "\"REPO_NAME\":{\"display-order\":\"1\",\"display-name\":\"Repository Name\",\"part-of-identity\":true,\"secure\":false,\"required\":true}," +
+                "\"REPO_URL\":{\"display-order\":\"0\",\"display-name\":\"Nexus Url\",\"part-of-identity\":true,\"secure\":false,\"required\":true}}";
 
         Map expectedRepositoryConfigurationMap = (Map) new GsonBuilder().create().fromJson(expectedRepositoryConfiguration, Object.class);
         when(goApiPluginRequest.requestName()).thenReturn(REPOSITORY_CONFIGURATION);
@@ -65,7 +66,8 @@ public class NexusPluginTest {
     @Test
     public void shouldReturnNoErrorsForCorrectRepositoryConfiguration() {
         String requestBody = "{\"repository-configuration\":" +
-                "{\"REPO_URL\":{\"value\":\"http://nuget.org/api/v2/\"}," +
+                "{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
+                "{\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
                 "\"USERNAME\":{\"value\":\"\"}," +
                 "\"PASSWORD\":{\"value\":\"\"}}}";
         when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_REPOSITORY_CONFIGURATION);
@@ -82,10 +84,11 @@ public class NexusPluginTest {
     @Test
     public void shouldSuccessfullyConnectToRepository() {
         String requestBody = "{\"repository-configuration\":" +
-                "{\"REPO_URL\":{\"value\":\"http://nuget.org/api/v2/\"}," +
+                "{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"}," +
+                "{\"REPO_NAME\":{\"value\":\"nuget-official\"}," +
                 "\"USERNAME\":{\"value\":\"\"}," +
                 "\"PASSWORD\":{\"value\":\"\"}}}";
-        String expectedResponseAsString = "{\"messages\":[\"Successfully connected to repository url provided\"],\"status\":\"success\"}";
+        String expectedResponseAsString = "{\"messages\":[\"Successfully connected to nexus url provided\"],\"status\":\"success\"}";
         when(goApiPluginRequest.requestName()).thenReturn(CHECK_REPOSITORY_CONNECTION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 
@@ -117,7 +120,7 @@ public class NexusPluginTest {
 
     @Test
     public void shouldReturnNoErrorsForCorrectPackageConfiguration() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"http://nuget.org/api/v2/\"}}," +
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}}," +
                 "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"NUnit\"}}}";
         when(goApiPluginRequest.requestName()).thenReturn(VALIDATE_PACKAGE_CONFIGURATION);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
@@ -132,7 +135,7 @@ public class NexusPluginTest {
 
     @Test
     public void shouldSuccessfullyConnectToPackage() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"http://nuget.org/api/v2/\"}},"+
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}},"+
                               "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"JQuery\"},"+
                                                             "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
                                                             "\"POLL_VERSION_TO\":{\"value\":\"2.2.5\"}," +
@@ -152,7 +155,7 @@ public class NexusPluginTest {
 
     @Test
     public void getLatestRevisionShouldBeSuccessful() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"http://nuget.org/api/v2/\"}},"+
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}},"+
                 "\"package-configuration\":{"+"\"PACKAGE_ID\":{\"value\":\"JQuery\"},"+
                 "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
                 "\"POLL_VERSION_TO\":{\"value\":\"2.2.5\"}," +
@@ -167,14 +170,14 @@ public class NexusPluginTest {
 
     @Test
     public void getLatestRevisionSinceShouldBeSuccessful() {
-        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"http://nuget.org/api/v2/\"}},"+
+        String requestBody = "{\"repository-configuration\":{\"REPO_URL\":{\"value\":\"https://repositories.pse.zen.co.uk\"},\"REPO_NAME\":{\"value\":\"nuget-official\"}},"+
                 "\"package-configuration\":{\"PACKAGE_ID\":{\"value\":\"jQuery\"},"+
                                            "\"POLL_VERSION_FROM\":{\"value\":\"2.2.3\"},"+
                                            "\"POLL_VERSION_TO\":{\"value\":\"3\"},"+
                                            "\"INCLUDE_PRE_RELEASE\":{\"value\":\"no\"}},"+
                 "\"previous-revision\":{\"revision\":\"jQuery-2.2.4\","+
                                        "\"timestamp\":\"2016-06-16T16:31:00.873Z\","+
-                                       "\"data\":{\"LOCATION\":\"http://www.nuget.org/api/v2/package/jQuery/2.2.4\",\"VERSION\":\"2.2.4\"}}}";
+                                       "\"data\":{\"LOCATION\":\"https://repositories.pse.zen.co.uk/repository/nuget-sysdev/jQuery/2.2.4\",\"VERSION\":\"2.2.4\"}}}";
         when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION_SINCE);
         when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
 

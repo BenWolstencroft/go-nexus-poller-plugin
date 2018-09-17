@@ -1,0 +1,30 @@
+{
+    "run": {
+        "default": "",
+        "items": [
+            {
+                "name": "go-nexus-poller-plugin",
+                "projectName": "go-nexus-poller-plugin",
+                "workingDirectory": "c:\\Code\\GitHub\\BenWolstencroft\\go-nexus-poller-plugin",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    },
+    "debug": {
+        "default": "",
+        "items": [
+            {
+                "name": "go-nexus-poller-plugin",
+                "projectName": "go-nexus-poller-plugin",
+                "workingDirectory": "c:\\Code\\GitHub\\BenWolstencroft\\go-nexus-poller-plugin",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    }
+}

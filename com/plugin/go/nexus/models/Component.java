@@ -7,6 +7,7 @@ import java.util.Comparator;
 import com.google.gson.annotations.SerializedName;
 import com.thoughtworks.go.plugin.api.material.packagerepository.PackageRevision;
 
+import plugin.go.nexus.NexusAPIClient;
 import plugin.go.nexus.NexusException;
 
 public class Component implements Comparable<Component>  {
@@ -18,20 +19,22 @@ public class Component implements Comparable<Component>  {
     @SerializedName("version") final public String version = null;
     @SerializedName("assets") final public List<Asset> assets = null;
 
+    public AssetData data = null;
+
     public Version getVersion() {
         return new Version(this.version);
     }
 
     public String getPackageLocation() {
-        return assets.get(0).downloadUrl;
+        return this.assets.get(0).downloadUrl;
     }
 
     public String getAuthor() {
-        return "Nexus Repository Manager";
+        return this.data.createdBy;
     }
 
     public Date getPublishedDate() {
-        return new Date();
+        return this.data.getBlobCreated();
     }
 
     public String getEntryTitle() {
@@ -72,6 +75,15 @@ public class Component implements Comparable<Component>  {
         Version version2 = other.getVersion();
 
         return version1.compareTo(version2);
+    }
+
+    public void fetchAssetData(NexusAPIClient client) {
+        try {
+        AssetData data = client.getAssetData(this.assets.get(0));
+            this.data = data;
+        } catch (Exception e) {
+            this.data = new AssetData();
+        }
     }
 
     public static final Comparator<Component> VersionComparator = new Comparator<Component>() {

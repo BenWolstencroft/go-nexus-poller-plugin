@@ -9,4 +9,8 @@ public class Asset {
     @SerializedName("repository") final public String repository = null;
     @SerializedName("format") final public String format = null;
     @SerializedName("checksum") final public Checksum checksum = null;
+
+    public ID getAssetId() {
+        return new ID(this.id);
+    }
 }

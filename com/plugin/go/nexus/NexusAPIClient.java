@@ -2,27 +2,31 @@ package plugin.go.nexus;
 
 import java.util.List;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.stream.*;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.logging.Logger;
 import plugin.go.nexus.models.*;
+
 
 public class NexusAPIClient {
     private static Logger logger = Logger.getLoggerFor(ConnectionHandler.class);
 
     public static final String API_NAME = "Nexus Repository Manager REST API";
     public static final String API_ROOT = "/service/rest/v1";
+    public static final String EXTDIRECT_ROOT = "/service/extdirect";
 
     public static final String API_ASSETS = "/assets";
     public static final String API_ASSET = "/assets/{searchValue}";
@@ -63,7 +67,11 @@ public class NexusAPIClient {
         return this.url + API_ROOT + endpointWithValue;
     }
 
-    private URLConnection getConnection(String endpoint, String searchValue, HashMap<String, String> query, String continuationToken) throws Exception {
+    private String getExtDirectApiEndpoint() {
+        return this.url + EXTDIRECT_ROOT;
+    }
+
+    private HttpsURLConnection getConnection(String endpoint, String searchValue, HashMap<String, String> query, String continuationToken) throws Exception {
         String url = getApiEndpoint(endpoint, searchValue);
         if (query == null) {
             query = new HashMap<String, String>();
@@ -89,7 +97,7 @@ public class NexusAPIClient {
                 .orElse("");
         }
         URL repo = new URL(url + queryString);
-        URLConnection connection = repo.openConnection();
+        HttpsURLConnection connection =  (HttpsURLConnection) repo.openConnection();
         if (this.username != null && this.password != null) {
             String userpass = this.username + ':' + this.password;
             String authToken = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
@@ -99,8 +107,45 @@ public class NexusAPIClient {
         return connection;
     }
 
+    private HttpsURLConnection getExtDirectConnection() throws Exception {
+        String url = getExtDirectApiEndpoint();
+        URL repo = new URL(url);
+        HttpsURLConnection connection = (HttpsURLConnection) repo.openConnection();
+        if (this.username != null && this.password != null) {
+            String userpass = this.username + ':' + this.password;
+            String authToken = "Basic " + new String(Base64.getEncoder().encode(userpass.getBytes()));
+            connection.setRequestProperty("Authorization", authToken);
+        }
+        connection.setRequestProperty("User-Agent", "https://github.com/BenWolstencroft/go-nexus-poller-plugin ");
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("charset", "utf-8");
+        return connection;
+    }
+
     private String getText(String endpoint, String searchValue, HashMap<String, String> query, String continuationToken) throws Exception {
-        URLConnection connection = getConnection(endpoint, searchValue, query, continuationToken);
+        HttpsURLConnection connection = getConnection(endpoint, searchValue, query, continuationToken);
+        BufferedReader in = new BufferedReader(
+                                new InputStreamReader(
+                                    connection.getInputStream()));
+
+        StringBuilder response = new StringBuilder();
+        String inputLine;
+        while ((inputLine = in.readLine()) != null)
+            response.append(inputLine);
+        in.close();
+        return response.toString();
+    }
+
+    private String getJson(ExtDirectRequest request) throws Exception {
+        HttpsURLConnection connection = getExtDirectConnection();
+        connection.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        String requestData = request.toJson();
+        wr.writeBytes(requestData);
+        wr.flush();
+        wr.close();
+
         BufferedReader in = new BufferedReader(
                                 new InputStreamReader(
                                     connection.getInputStream()));
@@ -255,5 +300,21 @@ public class NexusAPIClient {
         Type resultType = new TypeToken<Task>() {}.getType();
         Task r = g.fromJson(text, resultType);
         return r;
+    }
+
+    public AssetData getAssetData(Asset asset) throws Exception {
+        List<String> data = new ArrayList<String>();
+        ID assetId = asset.getAssetId();
+        data.add(0, assetId.id);
+        data.add(1, assetId.repository);
+        ExtDirectRequest request = ExtDirectRequest.createExtDirectRequest(ExtDirectBase.ACTION_COREUI_COMPONENT, ExtDirectBase.METHOD_READASSET, ExtDirectBase.TYPE, data);
+        String text = getJson(request);
+        Gson g = new Gson();
+        Type resultType = new TypeToken<ExtDirectResponse<AssetData>>() {}.getType();
+        ExtDirectResponse<AssetData> r = g.fromJson(text, resultType);
+        if (r.result.success) {
+            return r.result.data;
+        }
+        return null;
     }
 }

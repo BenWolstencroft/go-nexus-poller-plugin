@@ -188,4 +188,37 @@ public class NexusPluginTest {
         Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
     }
 
+    @Test
+    public void getLatestRevisionSinceShouldBeSuccessfulAgain() {
+        String requestBody =
+            "{" +
+                "\"repository-configuration\":{"+
+                    "\"REPO_URL\":{" +
+                        "\"value\":\"https://repositories.pse.zen.co.uk\"" +
+                    "},"+
+                    "\"REPO_NAME\":{"+
+                        "\"value\":\"nuget-sysdev\""+
+                    "}"+
+                "}," +
+                "\"package-configuration\":{"+
+                    "\"PACKAGE_ID\":{"+
+                        "\"value\":\"Zen\""+
+                    "}"+
+                "}," +
+                "\"previous-revision\":{"+
+                    "\"revision\":\"Zen-4.6.6648.21476\","+
+                    "\"timestamp\":\"2018-09-17T16:16:09.711Z\","+
+                    "\"data\":{"+
+                        "\"LOCATION\":\"https://repositories.pse.zen.co.uk/repository/nuget-sysdev/Zen/4.6.6648.21476\","+
+                        "\"VERSION\":\"4.6.6648.21476\""+
+                    "}"+
+                "}"+
+            "}";
+        when(goApiPluginRequest.requestName()).thenReturn(LATEST_REVISION_SINCE);
+        when(goApiPluginRequest.requestBody()).thenReturn(requestBody);
+
+        GoPluginApiResponse response = nexusController.handle(goApiPluginRequest);
+
+        Assert.assertEquals(SUCCESS_RESPONSE_CODE, response.responseCode());
+    }
 }

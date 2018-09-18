@@ -94,8 +94,10 @@ public class ConnectionHandler {
     public Component getComponent(String url, String repoName, String username, String password, String name, String knownPackageRevision, String versionFrom, String versionTo, Boolean includePreRelease, NexusResultFilterer resultFilterer) {
         List<Component> assets = getComponents(url, repoName, username, password, name);
         Component component = resultFilterer.filterComponents(assets, knownPackageRevision, versionFrom, versionTo, includePreRelease);
-        NexusAPIClient client = new NexusAPIClient(url, repoName, username, password);
-        component.fetchAssetData(client);
+        if (component != null) {
+            NexusAPIClient client = new NexusAPIClient(url, repoName, username, password);
+            component.fetchAssetData(client);
+        }
         return component;
     }
 

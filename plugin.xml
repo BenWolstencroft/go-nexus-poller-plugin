@@ -19,7 +19,7 @@
 <go-plugin id="nexus" version="1">
     <about>
         <name>Nexus plugin</name>
-        <version>1.0.0</version>
+        <version>1.0.4</version>
         <target-go-version>15.3.0</target-go-version>
         <description>Plugin that polls a Nexus Repository Manager</description>
         <vendor>
